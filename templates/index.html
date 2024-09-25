@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Collaborative Whiteboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/whiteboard.css') }}"
+    />
+  </head>
+  <body>
+    <canvas id="whiteboard" width="800" height="600"></canvas>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/whiteboard.js') }}"></script>
+  </body>
+</html>
