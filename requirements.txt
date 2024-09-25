@@ -3,12 +3,14 @@ Flask-SocketIO==5.2.0
 #pip install Flask Flask-SocektIO
 # To run the server, use venv\Scripts\activate then do python server.py or py server.py
 
+
+# Structure of the Project
 collaborative-whiteboard/
 │
 ├── server.py                  # Flask server
 ├── requirements.txt            # Dependencies
 ├── .gitignore                  # Git ignore rules
-│
+│git
 ├── static/                     # For CSS and JS files
 │   ├── js/
 │   │   └── whiteboard.js       # JavaScript file for drawing functionality
