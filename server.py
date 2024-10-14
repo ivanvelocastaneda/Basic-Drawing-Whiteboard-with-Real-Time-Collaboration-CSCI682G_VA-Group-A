@@ -12,11 +12,11 @@ def index():
 # Handle draw events sent from clients
 @socketio.on('draw')
 def handle_draw(data):
-    # Log the drawing data received from a client
-    print(f'Received drawing data: {data}')
-    
-    # Broadcast the drawing data to all clients (including the sender)
-    emit('draw', data, broadcast=True)
+    # Log the drawing data print(f"Received drawing data: {data}")
+    print(f"Received drawing data: {data}")
+
+    # Broadcast the drawing data to all connected clients
+    emit('draw', data, broadcast=True, include_self=True)
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app)

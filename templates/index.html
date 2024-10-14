@@ -1,15 +1,73 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Collaborative Whiteboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/whiteboard.css') }}"
     />
   </head>
   <body>
-    <canvas id="whiteboard" width="800" height="600"></canvas>
+    <header>
+      <h1>Whiteboard</h1>
+      <button onclick="window.location.href='dashboard.html';">
+        Back to Dashboard
+      </button>
+    </header>
+    <!-- Tool Sidebar -->
+    <div class="toolbar">
+      <button class="tool-button active" id="pen-tool" title="Pen">
+        <i class="fas fa-pen"></i>
+      </button>
+      <button class="tool-button" id="eraser-tool" title="Eraser">
+        <i class="fas fa-eraser"></i>
+      </button>
+      <button class="tool-button" id="dropdown-toggle" title="More Tools">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="dropdown" id="dropdown-menu">
+        <div class="dropdown-content" id="new-sketch">New Sketch</div>
+        <div class="dropdown-content" id="save-sketch">Save Sketch</div>
+        <div class="dropdown-content" id="import-image">Import Image</div>
+        <div class="dropdown-content" id="share">Share</div>
+        <div class="dropdown-content" id="settings">Settings</div>
+        <div class="dropdown-content" id="support">Support</div>
+      </div>
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <button id="clear" title="Clear">
+        <i class="fas fa-trash"></i>
+      </button>
+      <button id="undo" title="Undo"><i class="fas fa-undo"></i></button>
+      <button id="redo" title="Redo"><i class="fas fa-redo"></i></button>
+      <button id="add-layer" title="Add Layer">
+        <i class="fas fa-layer-group"></i>
+      </button>
+      <input type="color" id="color-picker" value="#000000" />
+      <input type="range" id="brush-size" min="1" max="50" value="5" />
+    </div>
+
+    <!-- Drawing Canvas -->
+    <canvas id="drawing-canvas"></canvas>
+
+    <!-- Layer Panel -->
+    <div class="layer-panel">
+      <div class="layer-item">
+        <input type="checkbox" checked /> <span>Layer 1</span>
+        <button><i class="fas fa-trash"></i></button>
+      </div>
+      <!-- Add more layers dynamically -->
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script src="{{ url_for('static', filename='js/whiteboard.js') }}"></script>
   </body>

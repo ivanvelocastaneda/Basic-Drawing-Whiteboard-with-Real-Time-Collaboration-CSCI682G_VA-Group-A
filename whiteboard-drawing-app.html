@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Whiteboard Drawing App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        .toolbar, .layer-panel, .top-bar {
+            background: #ffffff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 50px;
+            align-items: center;
+            border-right: 1px solid #ccc;
+        }
+
+        .layer-panel {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            position: absolute;
+            right: 0;
+            top: 50px;
+            bottom: 0;
+            width: 200px;
+            overflow-y: auto;
+            border-left: 1px solid #ccc;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            height: 50px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .tool-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 35px;
+            height: 35px;
+            margin-bottom: 10px;
+            border: none;
+            background: #ffffff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .tool-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .tool-button.active {
+            background-color: #d0d0ff;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 10px;
+            left: 60px;
+            display: none;
+            background: #ffffff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            z-index: 20;
+        }
+
+        .dropdown-content {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .dropdown-content:hover {
+            background-color: #f1f1f1;
+        }
+
+        .top-bar button {
+            margin-right: 10px;
+        }
+
+        #drawing-canvas {
+            flex: 1;
+            cursor: crosshair;
+            display: block;
+            margin: 50px 200px 0 50px; /* Adjust margins for toolbar and panel */
+        }
+
+        .layer-item {
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .layer-item input {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Tool Sidebar -->
+    <div class="toolbar">
+        <button class="tool-button active" id="pen-tool" title="Pen"><i class="fas fa-pen"></i></button>
+        <button class="tool-button" id="eraser-tool" title="Eraser"><i class="fas fa-eraser"></i></button>
+        <button class="tool-button" id="dropdown-toggle" title="More Tools"><i class="fas fa-bars"></i></button>
+        <div class="dropdown" id="dropdown-menu">
+            <div class="dropdown-content" id="new-sketch">New Sketch</div>
+            <div class="dropdown-content" id="save-sketch">Save Sketch</div>
+            <div class="dropdown-content" id="import-image">Import Image</div>
+            <div class="dropdown-content" id="share">Share</div>
+            <div class="dropdown-content" id="settings">Settings</div>
+            <div class="dropdown-content" id="support">Support</div>
+        </div>
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <button id="undo" title="Undo"><i class="fas fa-undo"></i></button>
+        <button id="redo" title="Redo"><i class="fas fa-redo"></i></button>
+        <button id="add-layer" title="Add Layer"><i class="fas fa-layer-group"></i></button>
+        <input type="color" id="color-picker" value="#000000">
+        <input type="range" id="brush-size" min="1" max="50" value="5">
+    </div>
+
+    <!-- Drawing Canvas -->
+    <canvas id="drawing-canvas"></canvas>
+
+    <!-- Layer Panel -->
+    <div class="layer-panel">
+        <div class="layer-item">
+            <input type="checkbox" checked> <span>Layer 1</span>
+            <button><i class="fas fa-trash"></i></button>
+        </div>
+        <!-- Add more layers dynamically -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        const canvas = document.getElementById('drawing-canvas');
+        const ctx = canvas.getContext('2d');
+        const penButton = document.getElementById('pen-tool');
+        const eraserButton = document.getElementById('eraser-tool');
+        const dropdownToggle = document.getElementById('dropdown-toggle');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        const colorPicker = document.getElementById('color-picker');
+        const brushSize = document.getElementById('brush-size');
+        const undoButton = document.getElementById('undo');
+        const redoButton = document.getElementById('redo');
+        const addLayerButton = document.getElementById('add-layer');
+        const newSketchButton = document.getElementById('new-sketch');
+        const saveSketchButton = document.getElementById('save-sketch');
+        const importImageButton = document.getElementById('import-image');
+        const shareButton = document.getElementById('share');
+        const settingsButton = document.getElementById('settings');
+        const supportButton = document.getElementById('support');
+
+        // Canvas setup
+        canvas.width = window.innerWidth - 250; // Adjust for toolbar and layer panel
+        canvas.height = window.innerHeight - 50;
+
+        let drawing = false;
+        let currentTool = 'pen';
+        let currentColor = colorPicker.value;
+        let currentBrushSize = brushSize.value;
+        let undoStack = [];
+        let redoStack = [];
+
+        // Event listeners
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        penButton.addEventListener('click', () => {
+            currentTool = 'pen';
+            penButton.classList.add('active');
+            eraserButton.classList.remove('active');
+        });
+        eraserButton.addEventListener('click', () => {
+            currentTool = 'eraser';
+            eraserButton.classList.add('active');
+            penButton.classList.remove('active');
+        });
+        dropdownToggle.addEventListener('click', () => {
+            dropdownMenu.classList.toggle('show');
+        });
+        colorPicker.addEventListener('input', () => {
+            currentColor = colorPicker.value;
+        });
+        brushSize.addEventListener('input', () => {
+            currentBrushSize = brushSize.value;
+        });
+        undoButton.addEventListener('click', undo);
+        redoButton.addEventListener('click', redo);
+
+        function startDrawing(e) {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            saveState(); // Save state before new drawing
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+
+            ctx.lineWidth = currentBrushSize;
+            ctx.lineCap = 'round';
+
+            if (currentTool === 'pen') {
+                ctx.strokeStyle = currentColor;
+                ctx.globalCompositeOperation = 'source-over';
+            } else if (currentTool === 'eraser') {
+                ctx.strokeStyle = '#ffffff'; // White for erasing
+                ctx.globalCompositeOperation = 'destination-out';
+            }
+
+            ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            drawing = false;
+            ctx.closePath();
+        }
+
+        function saveState() {
+            undoStack.push(canvas.toDataURL());
+            redoStack = []; // Clear redo stack after new action
+        }
+
+        function undo() {
+            if (undoStack.length > 0) {
+                redoStack.push(undoStack.pop());
+                restoreState(undoStack[undoStack.length - 1]);
+            }
+        }
+
+        function redo() {
+            if (redoStack.length > 0) {
+                undoStack.push(redoStack.pop());
+                restoreState(undoStack[undoStack.length - 1]);
+            }
+        }
+
+        function restoreState(state) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const img = new Image();
+            img.src = state;
+            img.onload = () => ctx.drawImage(img, 0, 0);
+        }
+        });
+    </script>
+    
+<!--     
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Collaborative Whiteboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/whiteboard.css') }}"
+    />
+  </head>
+  <body>
+    <canvas id="whiteboard" width="800" height="600"></canvas>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/whiteboard.js') }}"></script>
+  </body>
+</html> -->
+
+{% comment %}
+    <!-- Tool Sidebar -->
+    <div class="toolbar">
+      <button class="tool-button active" id="pen-tool" title="Pen">
+        <i class="fas fa-pen"></i>
+      </button>
+      <button class="tool-button" id="eraser-tool" title="Eraser">
+        <i class="fas fa-eraser"></i>
+      </button>
+      <button class="tool-button" id="dropdown-toggle" title="More Tools">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="dropdown" id="dropdown-menu">
+        <div class="dropdown-content" id="new-sketch">New Sketch</div>
+        <div class="dropdown-content" id="save-sketch">Save Sketch</div>
+        <div class="dropdown-content" id="import-image">Import Image</div>
+        <div class="dropdown-content" id="share">Share</div>
+        <div class="dropdown-content" id="settings">Settings</div>
+        <div class="dropdown-content" id="support">Support</div>
+      </div>
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <button id="clear" title="Clear">
+        <i class="fas fa-trash"></i>
+      </button>
+      <button id="undo" title="Undo"><i class="fas fa-undo"></i></button>
+      <button id="redo" title="Redo"><i class="fas fa-redo"></i></button>
+      <button id="add-layer" title="Add Layer">
+        <i class="fas fa-layer-group"></i>
+      </button>
+      <input type="color" id="color-picker" value="#000000" />
+      <input type="range" id="brush-size" min="1" max="50" value="5" />
+    </div>
+
+    <!-- Drawing Canvas -->
+    <canvas id="drawing-canvas"></canvas>
+
+    <!-- Layer Panel -->
+    <div class="layer-panel">
+      <div class="layer-item">
+        <input type="checkbox" checked /> <span>Layer 1</span>
+        <button><i class="fas fa-times"></i></button>
+      </div>
+      <!-- Add more layers dynamically -->
+    </div>
+    {% endcomment %}
+

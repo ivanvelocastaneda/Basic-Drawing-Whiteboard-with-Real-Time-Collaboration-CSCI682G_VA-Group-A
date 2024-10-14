@@ -1,0 +1,283 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    background-color: #ddd;
+    font-family: "Rubik", sans-serif;
+    line-height: 1;
+    font-weight: 400;
+    color: #555;
+    overflow-x: hidden; /* hide any content overflowing the viewport horizontally*/
+  }
+  
+  /* Header with Profile */
+  header {
+    /* background-color: #1a1a1a; */
+    background-color: rgb(107, 116, 135);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+  }
+  
+  /* Move Profile Section to the Right */
+  .profile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-left: auto; /* Pushes the profile to the right */
+    margin-right: 50px;
+  }
+  
+  .profile-img-container {
+    position: relative;
+    display: flex;
+    align-items: center; /* Center vertically */
+  }
+  
+  .profile-img {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px; /* Space between image and text */
+  }
+  
+  /* Camera Icon on the Image */
+  .camera-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #1a1a1a;
+    border-radius: 50%;
+    padding: 3px;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .camera-icon img {
+    width: 14px;
+    height: 14px;
+    color: white;
+  }
+  
+  .setting img {
+    margin-left: 40px;
+    width: 25px;
+    height: 25px;
+  }
+  
+  /* Dropdown Profile Info */
+  .profile-dropdown {
+    display: none; /* Hidden by default */
+    position: absolute;
+    right: 0;
+    top: 60px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    width: 300px;
+    z-index: 10;
+    /* color: black; */
+  }
+  
+  .profile-dropdown.active {
+    display: block; /* Show when active */
+  }
+  
+  /* Microsoft Logo and Text */
+  .microsoft-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    justify-content: space-between; /* Align items */
+  }
+  
+  .microsoft-logo {
+    width: 25px; /* Adjusted logo size */
+    height: 25px; /* Adjusted logo size */
+    margin-right: 8px; /* Space between logo and text */
+  }
+  
+  .microsoft-text {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Margin for spacing */
+  }
+  
+  .user-info img {
+    border-radius: 50%;
+    width: 60px; /* Adjusted size */
+    height: 60px; /* Adjusted size */
+    object-fit: cover;
+    margin-right: 14px; /* Space between image and text */
+  }
+  
+  .user-info div {
+    display: flex;
+    flex-direction: column; /* Stack user info vertically */
+  }
+  
+  .user-info span {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .user-info .user-name {
+    font-size: 24px;
+    margin-right: 20px;
+  }
+  
+  .user-info .email {
+    color: #666;
+    font-size: 16px;
+  }
+  
+  /* My Microsoft Account Link */
+  .my-account {
+    color: #0078d4; /* Link color */
+    font-size: 16px; /* Font size for the link */
+    margin-top: 5px; /* Margin for separation */
+  }
+  
+  /* Sign Out Button in Dropdown */
+  .sign-out-dropdown {
+    /* background-color: #0078d4; */
+    color: #333;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    /* width: 100%; */
+    text-align: center;
+    margin-left: auto; /* Align to the right */
+    margin-top: 5px; /* Space between the user info and sign out button */
+  }
+  
+  /* Dashboard Container */
+  .dashboard {
+    padding: 30px;
+    display: flex;
+    gap: 30px;
+    margin-left: 90px; /* Margin to the left */
+    margin-right: 30px; /* Margin to the right */
+  }
+  
+  /* New Whiteboard Card */
+  .new-whiteboard {
+    background-color: #0910de;
+    color: white;
+    width: 250px; /* Increased width */
+    height: 250px; /* Increased height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+  }
+  
+  /* Plus Button */
+  .plus-button {
+    background-color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 40px;
+    color: #0078d4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  /* Whiteboard Card */
+  .whiteboard-card {
+    background-color: #fff;
+    width: 250px; /* Increased width */
+    height: 250px; /* Increased height */
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    position: relative;
+  }
+  
+  /* Shadow Line Divider */
+  .divider {
+    border-bottom: 2px solid #ccc;
+    margin-top: auto; /* Position at the bottom */
+    width: 100%;
+  }
+  
+  /* Whiteboard Card Title and Timestamp */
+  .whiteboard-card h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+    text-align: left;
+    margin-top: -10px; /* Margin to the top */
+  }
+  
+  .timestamp {
+    color: #666;
+    font-size: 14px;
+    text-align: left;
+    margin-top: 10px; /* Margin to the top */
+  }
+  
+  /* Whiteboard card bottom content */
+  .whiteboard-footer {
+    text-align: left;
+    margin-top: 24px; /* Margin for spacing */
+    display: flex;
+    justify-content: space-between; /* Distribute space between title and dots */
+    align-items: center; /* Center align items */
+  }
+  
+  /* More Info Dots */
+  .more-info {
+    cursor: pointer;
+    color: #666;
+    font-size: 14px; /* Adjusted font size for better visibility */
+    display: flex; /* Flexbox for alignment */
+  }
+  
+  .dot {
+    height: 4px; /* Dot size */
+    width: 4px; /* Dot size */
+    background-color: #666; /* Dot color */
+    border-radius: 50%; /* Circular shape */
+    margin-left: 5px; /* Spacing between dots */
+  }
+  
+  /* User Name */
+  .user-name {
+    color: white;
+    font-size: 20px;
+    margin-left: 10px; /* Spacing between icon and name */
+  }
+  

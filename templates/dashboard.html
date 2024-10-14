@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400..900;1,300..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>Whiteboard Dashboard</title>
+  </head>
+  <body>
+    <!-- Header with Profile -->
+    <header>
+      <!-- Profile Section moved to the right -->
+      <div class="profile" id="profile-section">
+        <!-- Profile Image with Camera Icon -->
+        <div class="profile-img-container">
+          <img
+            src="https://static.vecteezy.com/system/resources/previews/020/911/740/original/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png"
+            alt="User Profile"
+            class="profile-img"
+          />
+          <div class="camera-icon">
+            <img src="https://via.placeholder.com/12x12" alt="Camera Icon" />
+          </div>
+        </div>
+
+        <!-- User Name next to Profile Image -->
+        <span class="user-name">Alin Velo</span>
+
+        <!-- Settings Icon -->
+        <div class="setting">
+          <img
+            src="https://icon-library.com/images/setting-icon/setting-icon-0.jpg"
+            alt="Settings Icon"
+            class="settings-icon"
+          />
+        </div>
+
+        <!-- Dropdown with Profile Details -->
+        <div class="profile-dropdown" id="profile-dropdown">
+          <!-- Microsoft Logo and Text -->
+          <div class="microsoft-container">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
+              alt="Microsoft Logo"
+              class="microsoft-logo"
+            />
+            <span class="microsoft-text">Microsoft</span>
+            <!-- Sign Out Button inside Dropdown -->
+            <button class="sign-out-dropdown">Sign Out</button>
+          </div>
+
+          <!-- User Info (left profile image and text right) -->
+          <div class="user-info">
+            <img
+              src="https://cdn3.iconfinder.com/data/icons/avatars-flat/33/man_5-1024.png"
+              alt="Profile Image"
+              class="profile-dropdown-img"
+            />
+            <div>
+              <span class="user-name">Alin Velo</span>
+              <span class="email">alinvelo@gmail.com</span>
+              <a href="#" class="my-account">My Account</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard">
+      <!-- New Whiteboard Button Card -->
+      <div class="new-whiteboard">
+        <button class="plus-button">+</button>
+        <span>New Whiteboard</span>
+      </div>
+
+      <!-- Existing Whiteboard Card -->
+      <div class="whiteboard-card">
+        <!-- Shadow Line Divider -->
+        <div class="divider"></div>
+
+        <!-- Footer Section with Title and Timestamp at the bottom -->
+        <div class="whiteboard-footer">
+          <h3>Untitled</h3>
+          <div class="more-info">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+
+        <span class="timestamp">Edited: Wed 8:11 PM</span>
+      </div>
+    </div>
+
+    <!-- Toggle Profile Dropdown -->
+    {% comment %}
+    <script>
+      const profileSection = document.getElementById("profile-section");
+      const profileDropdown = document.getElementById("profile-dropdown");
+
+      profileSection.addEventListener("click", () => {
+        profileDropdown.classList.toggle("active");
+      });
+    </script>
+    {% endcomment %}
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <script src="{{ url_for('static', filename='js/whiteboard.js') }}"></script>
+</html>
