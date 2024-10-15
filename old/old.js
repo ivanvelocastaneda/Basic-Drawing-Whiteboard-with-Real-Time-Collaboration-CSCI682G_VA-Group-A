@@ -1,3 +1,44 @@
+// // Get canvas and set up context for drawing
+// var canvas = document.getElementById("whiteboard");
+// var context = canvas.getContext("2d");
+// var drawing = false;
+
+// // Start drawing
+// canvas.addEventListener("mousedown", function (e) {
+//   drawing = true;
+//   context.beginPath();
+//   context.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+// });
+
+// // Send drawing data to server on mouse movement
+// canvas.addEventListener("mousemove", function (e) {
+//   if (drawing) {
+//     var drawData = {
+//       x: e.clientX - canvas.offsetLeft,
+//       y: e.clientY - canvas.offsetTop
+//     };
+//     // Send drawing data to server
+//     socket.emit("draw", drawData);
+
+//     // Draw locally on the client's canvas
+//     context.lineTo(drawData.x, drawData.y);
+//     context.stroke();
+//   }
+// });
+
+// // Stop drawing
+// canvas.addEventListener("mouseup", function () {
+//   drawing = false;
+// });
+
+// // Listen for draw events from the server
+// socket.on("draw", function (data) {
+//   // Update the canvas with drawing data from the server
+//   context.lineTo(data.x, data.y);
+//   context.stroke();
+// });
+
+// With layer functionality
 // Initialize socket.io connection
 var socket = io();
 
@@ -6,7 +47,6 @@ var canvas = document.getElementById("drawing-canvas");
 var ctx = canvas.getContext("2d");
 var penButton = document.getElementById("pen-tool");
 var eraserButton = document.getElementById("eraser-tool");
-var handButton = document.getElementById("move");
 var dropdownToggle = document.getElementById("dropdown-toggle");
 var dropdownMenu = document.getElementById("dropdown-menu");
 var colorPicker = document.getElementById("color-picker");
@@ -14,6 +54,7 @@ var brushSize = document.getElementById("brush-size");
 var undoButton = document.getElementById("undo");
 var redoButton = document.getElementById("redo");
 var clearButton = document.getElementById("clear");
+var addLayerButton = document.getElementById("add-layer");
 var newSketchButton = document.getElementById("new-sketch");
 var saveSketchButton = document.getElementById("save-sketch");
 var importImageButton = document.getElementById("import-image");
@@ -22,6 +63,7 @@ var settingsButton = document.getElementById("settings");
 var supportButton = document.getElementById("support");
 
 // Canvas setup
+// Set canvas dimensions
 canvas.width = window.innerWidth - 250; // Adjust width based on toolbar and panel
 canvas.height = window.innerHeight - 50; // Adjust height based on top bar
 
@@ -69,7 +111,7 @@ clearButton.addEventListener("click", clearCanvas);
 function startDrawing(e) {
   drawing = true;
   ctx.beginPath();
-  ctx.moveTo(getCanvasX(e), getCanvasY(e)); // Use helper function for accurate positioning
+  ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
   saveState(); // Save state before new drawing
 }
 
@@ -79,18 +121,15 @@ function draw(e) {
   ctx.lineWidth = currentBrushSize;
   ctx.lineCap = "round";
 
-  if (currentTool === "pen") {
-    ctx.strokeStyle = currentColor;
-    ctx.globalCompositeOperation = "source-over";
-  } else if (currentTool === "eraser") {
-    ctx.strokeStyle = "#ffffff"; // White for erasing
-    ctx.globalCompositeOperation = "destination-out";
-  }
+  ctx.strokeStyle = currentTool === "pen" ? currentColor : "#ffffff"; // White for erasing
+  ctx.globalCompositeOperation =
+    currentTool === "pen" ? "source-over" : "destination-out";
 
-  ctx.lineTo(getCanvasX(e), getCanvasY(e)); // Use helper function for accurate positioning
+  ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
   ctx.stroke();
 }
 
+// Stop drawing
 function stopDrawing() {
   drawing = false;
 }
@@ -128,29 +167,12 @@ function clearCanvas() {
   redoStack = [];
 }
 
-// Helper function to get mouse position relative to canvas
-function getCanvasX(e) {
-  const rect = canvas.getBoundingClientRect();
-  // Adjust using the bounding rectangle and window.devicePixelRatio for high-DPI displays
-  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-  console.log("Canvas X: ", x); // Debugging log
-  return x;
-}
-
-function getCanvasY(e) {
-  const rect = canvas.getBoundingClientRect();
-  // Adjust using the bounding rectangle and window.devicePixelRatio for high-DPI displays
-  const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-  console.log("Canvas Y: ", y); // Debugging log
-  return y;
-}
-
 // Send drawing data to server on mouse movement
 canvas.addEventListener("mousemove", function (e) {
   if (drawing) {
     var drawData = {
-      x: getCanvasX(e),
-      y: getCanvasY(e)
+      x: e.clientX - canvas.offsetLeft,
+      y: e.clientY - canvas.offsetTop
     };
     // Send drawing data to server
     socket.emit("draw", drawData);
@@ -161,11 +183,7 @@ canvas.addEventListener("mousemove", function (e) {
   }
 });
 
-// Stop drawing
-canvas.addEventListener("mouseup", function () {
-  drawing = false;
-});
-
+// Save sketch as an image
 saveSketchButton.addEventListener("click", () => {
   const link = document.createElement("a");
   link.href = canvas.toDataURL();
@@ -173,6 +191,7 @@ saveSketchButton.addEventListener("click", () => {
   link.click();
 });
 
+// Import image into canvas
 importImageButton.addEventListener("change", (event) => {
   const file = event.target.files[0];
   const reader = new FileReader();
@@ -186,6 +205,7 @@ importImageButton.addEventListener("change", (event) => {
   reader.readAsDataURL(file);
 });
 
+// Share session link
 shareButton.addEventListener("click", () => {
   const sessionId = Math.random().toString(36).substr(2, 9); // Unique ID generation
   const shareLink = `${window.location.origin}/whiteboard/${sessionId}`;
@@ -204,96 +224,6 @@ socket.on("draw", function (data) {
   ctx.stroke();
 });
 
-let isPanning = false;
-let startX = 0,
-  startY = 0;
-let offsetX = 0,
-  offsetY = 0;
-let savedOffsetX = 0,
-  savedOffsetY = 0;
-let savedCanvas = null; // Variable to store canvas image
-
-// Switch to hand tool
-handButton.addEventListener("click", () => {
-  currentTool = "hand";
-  handButton.classList.add("active");
-  penButton.classList.remove("active");
-  eraserButton.classList.remove("active");
-});
-
-// Start panning when the hand tool is active
-canvas.addEventListener("mousedown", (e) => {
-  if (currentTool === "hand") {
-    isPanning = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    savedCanvas = new Image(); // Store the current canvas
-    savedCanvas.src = canvas.toDataURL();
-    canvas.style.cursor = "grabbing"; // Change cursor to grabbing hand
-  } else if (currentTool === "pen" || currentTool === "eraser") {
-    startDrawing(e); // Start drawing if not in "hand" mode
-  }
-});
-
-// Move the canvas content when the hand tool is active
-canvas.addEventListener("mousemove", (e) => {
-  if (isPanning && currentTool === "hand") {
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-
-    offsetX = savedOffsetX + dx;
-    offsetY = savedOffsetY + dy;
-
-    // Clear the canvas and apply the pan offset to the whole drawing
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
-    ctx.translate(offsetX, offsetY); // Move the entire canvas content
-
-    // Redraw the saved canvas image at the new offset
-    if (savedCanvas) {
-      ctx.drawImage(savedCanvas, 0, 0);
-    }
-
-    ctx.restore();
-  } else if (drawing && (currentTool === "pen" || currentTool === "eraser")) {
-    draw(e); // Handle drawing as usual
-  }
-});
-
-// Stop panning and save the last offset position
-canvas.addEventListener("mouseup", () => {
-  if (isPanning) {
-    isPanning = false;
-    savedOffsetX = offsetX;
-    savedOffsetY = offsetY;
-    canvas.style.cursor = "default"; // Reset cursor to default
-  } else {
-    stopDrawing(); // Stop drawing when mouse is released
-  }
-});
-
-// Stop panning if the mouse leaves the canvas
-canvas.addEventListener("mouseleave", () => {
-  if (isPanning) {
-    isPanning = false;
-    savedOffsetX = offsetX;
-    savedOffsetY = offsetY;
-    canvas.style.cursor = "default";
-  }
-});
-
-// Drawing should be disabled when the hand tool is active
-function startDrawing(e) {
-  if (currentTool !== "hand") {
-    drawing = true;
-    ctx.beginPath();
-    ctx.moveTo(getCanvasX(e), getCanvasY(e)); // Accurate positioning
-    saveState(); // Save the state before new drawing
-  }
-}
-
-// Dashboard js
-
 // Toggle Profile Dropdown
 const profileSection = document.getElementById("profile-section");
 const profileDropdown = document.getElementById("profile-dropdown");
@@ -303,7 +233,6 @@ profileSection.addEventListener("click", () => {
 
 document.addEventListener("click", (event) => {
   const isClickInside = profileSection.contains(event.target);
-
   if (!isClickInside) {
     profileDropdown.classList.remove("active");
   }

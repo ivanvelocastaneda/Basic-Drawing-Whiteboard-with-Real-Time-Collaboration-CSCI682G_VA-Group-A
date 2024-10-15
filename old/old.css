@@ -1,0 +1,113 @@
+body, html { 
+    margin: 0; 
+    padding: 0; 
+    overflow: 
+    hidden; display: 
+    flex; height: 100%; 
+    font-family: Arial, sans-serif; 
+    background-color: #f0f2f5; 
+}
+
+.toolbar, .layer-panel, .top-bar { 
+    background: #ffffff; 
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); 
+    z-index: 10; }
+
+.toolbar { 
+    display: flex; 
+    flex-direction: column; 
+    padding: 10px; 
+    position: absolute; 
+    left: 0; 
+    top: 0; 
+    bottom: 0; 
+    width: 50px; 
+    align-items: center; 
+    border-right: 1px solid #ccc; }
+
+.layer-panel { 
+    display: flex; 
+    flex-direction: column;
+    padding: 10px; 
+    position: absolute; 
+    right: 0; 
+    top: 50px; 
+    bottom: 0; 
+    width: 200px; 
+    overflow-y: auto; 
+    border-left: 1px solid #ccc; }
+
+.top-bar { 
+    display: flex; 
+    align-items: center; 
+    padding: 10px; 
+    position: absolute; 
+    left: 70px; /* Adjust the left position to make room for the toolbar */ 
+    top: 0; 
+    right: 220px; /* Adjust the right position to make room for the layer panel */ 
+    height: 50px; border-bottom: 1px solid #ccc; }
+
+.tool-button { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    width: 35px; 
+    height: 35px; 
+    margin-bottom: 10px; 
+    border: none; 
+    background: #ffffff; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    transition: background-color 0.3s; 
+}
+
+.tool-button:hover { 
+    background-color: #e0e0e0; 
+}
+
+.tool-button.active { 
+    background-color: #d0d0ff; 
+}
+
+.dropdown {
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    display: none;
+    left: 50px; /* Align with the toolbar */
+    top: 35px; /* Adjust to place it below the toggle button */
+    right: calc(100vw - 250px); /* Dynamically adjust right position */
+}
+
+.dropdown-content {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.dropdown-content:hover {
+    background-color: #f1f1f1; /* Highlight on hover */
+}
+
+.top-bar button { 
+    margin-right: 10px; 
+}
+
+#drawing-canvas { 
+    flex: 1; 
+    cursor: crosshair; 
+    display: block; 
+    margin: 50px 200px 0 50px; /* Adjust margins for toolbar and panel */ 
+} 
+.layer-item { 
+    padding: 10px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid #ddd; 
+}
+
+.layer-item input { 
+    margin-right: 10px; 
+}

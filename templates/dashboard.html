@@ -82,7 +82,7 @@
       <!-- New Whiteboard Button Card -->
       <div class="new-whiteboard">
         <button class="plus-button">+</button>
-        <span>New Whiteboard</span>
+        <a href="{{ url_for('whiteboard') }}"><span>New Whiteboard</span></a>
       </div>
 
       <!-- Existing Whiteboard Card -->
@@ -103,18 +103,6 @@
         <span class="timestamp">Edited: Wed 8:11 PM</span>
       </div>
     </div>
-
-    <!-- Toggle Profile Dropdown -->
-    {% comment %}
-    <script>
-      const profileSection = document.getElementById("profile-section");
-      const profileDropdown = document.getElementById("profile-dropdown");
-
-      profileSection.addEventListener("click", () => {
-        profileDropdown.classList.toggle("active");
-      });
-    </script>
-    {% endcomment %}
   </body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
   <script src="{{ url_for('static', filename='js/whiteboard.js') }}"></script>
