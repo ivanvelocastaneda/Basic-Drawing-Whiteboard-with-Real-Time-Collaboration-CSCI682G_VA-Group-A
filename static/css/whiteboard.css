@@ -20,6 +20,7 @@ body, html {
     width: 50px;
     align-items: center;
     border-right: 1px solid #ccc;
+    z-index: 2; /* Ensure it stays above the canvas */
 }
 
 .bottom-bar {
@@ -33,6 +34,7 @@ body, html {
     left: 0;
     bottom: 0;
     width: 100%;
+    z-index: 2; /* Ensure it stays above the canvas */
 }
 
 .tool-button {
@@ -77,21 +79,13 @@ body, html {
     background-color: #f1f1f1; /* Highlight on hover */
 }
 
+/* Adjust the canvas styles */
 #drawing-canvas {
     flex: 1;
     cursor: crosshair;
     display: block;
-    margin: 56px 0 50px 50px; /* Adjust margins for navbar and bottom bar */
+    margin: 56px 50px 50px 50px; /* Set the same margin on all sides */
+    position: relative; /* Ensure the canvas is positioned relative to its container */
+    z-index: 1; /* Ensure it stays below the toolbar and bottom bar */
+    background-color: white; /* Optional: Set a background color for better visibility */
 }
-
-/* .layer-item {
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #ddd;
-}
-
-.layer-item input {
-    margin-right: 10px;
-} */

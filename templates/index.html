@@ -40,17 +40,20 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('dashboard') }}"
+              <a
+                class="nav-link"
+                href="{{ url_for('dashboard') }}"
+                title="Back to Dashboard"
                 ><i class="fa fa-home" aria-hidden="true"></i
               ></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#settings"
+              <a class="nav-link" href="#settings" title="Settings"
                 ><i class="fa fa-cog" aria-hidden="true"></i
               ></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#share"
+              <a class="nav-link" href="#share" title="Share"
                 ><i class="fa fa-share" aria-hidden="true"></i
               ></a>
             </li>
@@ -74,9 +77,6 @@
         <div class="dropdown-content" id="new-sketch">New Sketch</div>
         <div class="dropdown-content" id="save-sketch">Save Sketch</div>
         <div class="dropdown-content" id="import-image">Import Image</div>
-        <div class="dropdown-content" id="share">Share</div>
-        <div class="dropdown-content" id="settings">Settings</div>
-        <div class="dropdown-content" id="support">Support</div>
       </div>
     </div>
 
@@ -94,7 +94,7 @@
       <button id="clear" title="Clear">
         <i class="fas fa-trash"></i>
       </button>
-      <button id="move" title="Move">
+      <button id="move-tool" title="Move">
         <i class="fas fa-hand-paper"></i>
       </button>
       <button id="undo" title="Undo"><i class="fas fa-undo"></i></button>
