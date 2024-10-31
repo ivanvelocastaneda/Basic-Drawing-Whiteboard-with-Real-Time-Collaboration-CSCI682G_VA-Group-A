@@ -44,7 +44,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item dropdown">
+            <li
+              class="nav-item dropdown"
+              id="userProfile"
+              style="display: block"
+            >
               <a
                 class="nav-link dropdown-toggle"
                 href="#"
@@ -59,28 +63,12 @@
                   class="profile-img"
                   width="30"
                 />
-                Alin Velo
+                <span id="userName">{{ user.username }}</span>
               </a>
               <ul
                 class="dropdown-menu dropdown-menu-end"
                 aria-labelledby="navbarDropdown"
               >
-                <li class="dropdown-item">
-                  <div class="microsoft-container">
-                    <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
-                      alt="Microsoft Logo"
-                      class="microsoft-logo"
-                    />
-                    <span class="microsoft-text">Microsoft</span>
-                    <button
-                      class="btn btn-outline-danger btn-sm sign-out-dropdown"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                </li>
-                <li><hr class="dropdown-divider" /></li>
                 <li class="user-info dropdown-item">
                   <img
                     src="https://cdn3.iconfinder.com/data/icons/avatars-flat/33/man_5-1024.png"
@@ -88,10 +76,21 @@
                     class="profile-dropdown-img"
                   />
                   <div>
-                    <span class="user-name">Alin Velo</span><br />
-                    <span class="email">alinvelo@gmail.com</span>
-                    <a href="#" class="my-account">My Account</a>
+                    <span id="userNameDetail" class="user-name"
+                      >{{ user.name }}</span
+                    ><br />
+                    <span id="userEmail" class="email">{{ user.email }}</span>
+                    <a href="/account" class="my-account">My Account</a>
                   </div>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li class="dropdown-item">
+                  <button
+                    class="btn btn-outline-danger btn-sm sign-out-dropdown"
+                    onclick="signOut()"
+                  >
+                    Sign Out
+                  </button>
                 </li>
               </ul>
             </li>
@@ -99,6 +98,14 @@
         </div>
       </div>
     </nav>
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="alert-container">
+      {% for category, message in messages %} {% if category == 'success' %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endif %} {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
 
     <!-- Main Dashboard -->
     <div class="container mt-4">
@@ -136,12 +143,23 @@
         {% endif %}
       </div>
     </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/whiteboard.js') }}"></script>
+
+    <script>
+      function signOut() {
+        // Logic to sign out the user
+        console.log("User signed out");
+        // Perform sign-out actions, such as clearing session data
+        // Redirect to login or home page after signing out
+        window.location.href = "/login"; // Adjust the URL as needed
+      }
+    </script>
   </body>
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"
-  ></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
-  <script src="{{ url_for('static', filename='js/whiteboard.js') }}"></script>
 </html>

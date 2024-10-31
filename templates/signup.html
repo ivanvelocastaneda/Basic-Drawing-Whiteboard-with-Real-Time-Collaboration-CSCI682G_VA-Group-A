@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Collaborative Whiteboard - Sign Up</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/signup.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="tabs">
+        <button class="tab-btn" onclick="window.location.href='login'">
+          Login
+        </button>
+        <button class="tab-btn active" onclick="showForm('signup')">
+          Sign Up
+        </button>
+      </div>
+
+      <!-- Display flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <ul class="flashes">
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %}
+
+      <div id="signup" class="form-container active">
+        <form action="{{ url_for('signup') }}" method="POST">
+          <h2>Sign Up for Whiteboard</h2>
+          <input type="text" name="username" placeholder="Username" required />
+          <input type="email" name="email" placeholder="Email" required />
+          <!-- Email field added -->
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+          <input
+            type="password"
+            name="confirm_password"
+            placeholder="Confirm Password"
+            required
+          />
+          <button type="submit">Sign Up</button>
+        </form>
+      </div>
+    </div>
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <script src="{{ url_for('static', filename='js/signupAndLogin.js') }}"></script>
+</html>

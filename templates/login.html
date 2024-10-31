@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Collaborative Whiteboard - Login</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/login.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="showForm('login')">
+          Login
+        </button>
+        <button class="tab-btn" onclick="window.location.href='signup'">
+          Sign Up
+        </button>
+      </div>
+
+      <div id="login" class="form-container active">
+        <form action="{{ url_for('login') }}" method="POST">
+          <h2>Login to Whiteboard</h2>
+          <!-- Display flash messages only relevant to login/logout -->
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %}
+          <div class="alert-container">
+            {% for category, message in messages %} {% if category == 'info' or
+            category == 'danger' %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endif %} {% endfor %}
+          </div>
+          {% endif %} {% endwith %}
+
+          <input type="text" name="username" placeholder="Username" required />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+          <button type="submit">Login</button>
+        </form>
+      </div>
+    </div>
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <script src="{{ url_for('static', filename='js/signupAndLogin.js') }}"></script>
+</html>
