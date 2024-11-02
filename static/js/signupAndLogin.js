@@ -12,12 +12,12 @@ function showForm(formType) {
     .classList.add("active");
 }
 
-// Example function to simulate user login status and information
-const isLoggedIn = true; // Change this based on your authentication logic
-const userInfo = {
-  name: "John Doe", // Replace with the actual user's name
-  email: "johndoe@example.com" // Replace with the actual user's email
-};
+// // Example function to simulate user login status and information
+// const isLoggedIn = true; // Change this based on your authentication logic
+// const userInfo = {
+//   name: "John Doe", // Replace with the actual user's name
+//   email: "johndoe@example.com" // Replace with the actual user's email
+// };
 
 // Check login status and update the UI
 if (isLoggedIn) {
@@ -34,5 +34,9 @@ if (isLoggedIn) {
 }
 
 function signOut() {
-  window.location.href = "/sign_out"; // Navigate to the sign_out route
+  // Logic to sign out the user
+  console.log("User signed out");
+  // Perform sign-out actions, such as clearing session data
+  // Redirect to login or home page after signing out
+  window.location.href = "/login"; // Adjust the URL as needed
 }

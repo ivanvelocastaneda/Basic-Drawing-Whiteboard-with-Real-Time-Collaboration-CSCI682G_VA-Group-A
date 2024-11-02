@@ -180,51 +180,7 @@
     margin-left: 90px; /* Margin to the left */
     margin-right: 30px; /* Margin to the right */
   }
-  
-  /* New Whiteboard Card */
-  /* .new-whiteboard {
-    background-color: #0910de;
-    color: white;
-    width: 250px; 
-    height: 250px; 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 20px;
-    font-weight: 500;
-    text-align: center;
-  } */
-  
-  /* Plus Button */
-  /* .plus-button {
-    background-color: white;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    font-size: 40px;
-    color: #0078d4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    margin-bottom: 20px;
-  } */
-  
-  /* .whiteboard-card {
-    background-color: #fff;
-    width: 250px;
-    height: 250px;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    position: relative;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  } */
+
   #saved-whiteboards-section {
     display: flex;               /* Use flexbox for layout */
     flex-wrap: wrap;            /* Allow wrapping for smaller screens */
@@ -267,6 +223,26 @@
   .edit-button:focus {
       outline: none; /* Remove outline */
       box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Optional shadow effect */
+  }
+
+  .delete-button {
+    background-color: #ff0022; /* Bootstrap primary color */
+    color: white; /* Text color */
+    padding: 10px 15px; /* Padding around the text */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s ease; /* Smooth background change */
+  }
+
+  .delete-button:hover {
+      background-color: #500303; /* Darker shade on hover */
+  }
+
+  .delete-button:focus {
+      outline: none; /* Remove outline */
+      box-shadow: 0 0 5px rgba(230, 0, 0, 0.5); /* Optional shadow effect */
   }
 
   /* Shadow Line Divider */

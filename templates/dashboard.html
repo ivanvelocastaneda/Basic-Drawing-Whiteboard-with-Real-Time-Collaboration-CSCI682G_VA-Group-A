@@ -23,14 +23,14 @@
       href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400..900;1,300..900&display=swap"
       rel="stylesheet"
     />
-
-    <title>Whiteboard Dashboard</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <title>Collaborative Dashboard</title>
   </head>
   <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">Whiteboard Dashboard</a>
+        <a class="navbar-brand" href="#">Collaborative Whiteboard Dashboard</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -117,7 +117,7 @@
       </div>
 
       <!-- Container for Saved Whiteboards -->
-      <div class="row">
+      <div class="row" id="saved-whiteboards-section">
         {% for whiteboard in whiteboards %}
         <div class="col-md-4 mb-4">
           <div class="card">
@@ -130,6 +130,7 @@
               <h5 class="card-title">{{ whiteboard.name }}</h5>
               <p class="timestamp">Last modified: {{ whiteboard.timestamp }}</p>
               <button class="edit-button">Edit</button>
+              <button class="delete-button">Delete</button>
             </div>
           </div>
         </div>
@@ -151,15 +152,6 @@
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script src="{{ url_for('static', filename='js/whiteboard.js') }}"></script>
-
-    <script>
-      function signOut() {
-        // Logic to sign out the user
-        console.log("User signed out");
-        // Perform sign-out actions, such as clearing session data
-        // Redirect to login or home page after signing out
-        window.location.href = "/login"; // Adjust the URL as needed
-      }
-    </script>
+    <script src="{{ url_for('static', filename='js/signupAndLogin.js') }}"></script>
   </body>
 </html>

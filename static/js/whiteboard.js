@@ -211,6 +211,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const drawingData = canvas.toDataURL();
         const whiteboard = {
           name: whiteboardName,
+          data: drawingData, // Add this line to include 'data'
           image: drawingData,
           timestamp: new Date().toISOString()
         };
@@ -243,36 +244,53 @@ document.addEventListener("DOMContentLoaded", function () {
         const whiteboardsSection = document.getElementById(
           "saved-whiteboards-section"
         );
-        whiteboardsSection.innerHTML = ""; // Clear previous content
 
-        if (whiteboards.length > 0) {
-          whiteboards.forEach((whiteboard, index) => {
-            const whiteboardCard = document.createElement("div");
-            whiteboardCard.classList.add("whiteboard-card");
+        if (whiteboardsSection) {
+          // Ensure the element exists
+          whiteboardsSection.innerHTML = ""; // Clear previous content
 
-            const title = document.createElement("h3");
-            title.innerText = whiteboard.name || `Whiteboard ${index + 1}`;
+          if (whiteboards.length > 0) {
+            whiteboards.forEach((whiteboard, index) => {
+              const whiteboardCard = document.createElement("div");
+              whiteboardCard.classList.add("col-md-4", "mb-4"); // Add Bootstrap classes for layout
 
-            const img = document.createElement("img");
-            img.src = whiteboard.image;
-            img.alt = whiteboard.name;
-            // Enforce consistent image size
-            img.style.width = "250px";
-            img.style.height = "250px";
-            img.style.objectFit = "cover";
+              const card = document.createElement("div");
+              card.classList.add("card");
 
-            // Display the timestamp
-            const timestamp = document.createElement("p");
-            timestamp.classList.add("timestamp");
-            timestamp.innerText = `Last modified: ${whiteboard.timestamp}`;
+              const img = document.createElement("img");
+              img.src = whiteboard.image;
+              img.alt = whiteboard.name;
+              img.classList.add("card-img-top");
 
-            whiteboardCard.appendChild(title);
-            whiteboardCard.appendChild(img);
-            whiteboardCard.appendChild(timestamp);
-            whiteboardsSection.appendChild(whiteboardCard);
-          });
+              const cardBody = document.createElement("div");
+              cardBody.classList.add("card-body");
+
+              const title = document.createElement("h5");
+              title.classList.add("card-title");
+              title.innerText = whiteboard.name || `Whiteboard ${index + 1}`;
+
+              const timestamp = document.createElement("p");
+              timestamp.classList.add("timestamp");
+              timestamp.innerText = new Date(
+                whiteboard.timestamp
+              ).toLocaleString();
+
+              cardBody.appendChild(title);
+              cardBody.appendChild(timestamp);
+              card.appendChild(img);
+              card.appendChild(cardBody);
+              whiteboardCard.appendChild(card);
+              whiteboardsSection.appendChild(whiteboardCard);
+            });
+          } else {
+            const message = document.createElement("p");
+            message.innerText = "No saved whiteboards found.";
+            whiteboardsSection.appendChild(message);
+          }
         } else {
-          whiteboardsSection.innerHTML = "<p>No saved whiteboards found.</p>";
+          console.error(
+            "Element with ID 'saved-whiteboards-section' not found."
+          );
         }
       })
       .catch((error) => console.error("Error fetching whiteboards:", error));
