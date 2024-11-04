@@ -98,6 +98,7 @@
         </div>
       </div>
     </nav>
+
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
     messages %}
     <div class="alert-container">
@@ -129,8 +130,13 @@
             <div class="card-body">
               <h5 class="card-title">{{ whiteboard.name }}</h5>
               <p class="timestamp">Last modified: {{ whiteboard.timestamp }}</p>
-              <button class="edit-button">Edit</button>
-              <button class="delete-button">Delete</button>
+              <button
+                class="btn btn-danger delete-button"
+                data-id="{{ whiteboard.id }}"
+                onclick="deleteWhiteboard({{ whiteboard.id }})"
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>
@@ -144,14 +150,13 @@
         {% endif %}
       </div>
     </div>
-
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
-    <script src="{{ url_for('static', filename='js/whiteboard.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/signupAndLogin.js') }}"></script>
   </body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <script src="{{ url_for('static', filename='js/whiteboard.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/signupAndLogin.js') }}"></script>
 </html>

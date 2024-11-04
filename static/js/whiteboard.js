@@ -11,7 +11,6 @@ socket.on("disconnect", () => {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Get canvas and set up context for drawing
   var canvas = document.getElementById("drawing-canvas");
   if (canvas) {
     var ctx = canvas.getContext("2d");
@@ -27,12 +26,12 @@ document.addEventListener("DOMContentLoaded", function () {
     var redoButton = document.getElementById("redo");
     var moveButton = document.getElementById("move-tool");
 
-    // Canvas setup
-    canvas.width = window.innerWidth - 250; // Adjust width based on toolbar and panel
+    // Set canvas dimensions
+    canvas.width = window.innerWidth - 250;
     canvas.height =
       window.innerHeight -
       document.querySelector(".navbar").offsetHeight -
-      document.querySelector(".bottom-bar").offsetHeight; // Adjust height based on navbar and bottom bar
+      document.querySelector(".bottom-bar").offsetHeight;
 
     let drawing = false;
     let currentTool = "pen";
@@ -44,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let offsetX = 0;
     let offsetY = 0;
 
-    // Event listeners
+    // Event listeners for canvas
     canvas.addEventListener("mousedown", function (e) {
       if (currentTool === "move") {
         moving = true;
@@ -63,8 +62,8 @@ document.addEventListener("DOMContentLoaded", function () {
         offsetY = e.clientY;
 
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
-        ctx.putImageData(imageData, dx, dy); // Move the canvas content
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.putImageData(imageData, dx, dy);
       } else if (drawing) {
         draw(e);
       }
@@ -75,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
       stopDrawing();
     });
 
+    // Tool button event listeners
     penButton.addEventListener("click", () => {
       currentTool = "pen";
       activateTool(penButton);
@@ -110,19 +110,15 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     clearButton.addEventListener("click", clearCanvas);
-
-    // Undo button functionality
     undoButton.addEventListener("click", undo);
-
-    // Redo button functionality
     redoButton.addEventListener("click", redo);
 
     // Drawing functions
     function startDrawing(e) {
       drawing = true;
       ctx.beginPath();
-      ctx.moveTo(getCanvasX(e), getCanvasY(e)); // Use helper function for accurate positioning
-      saveState(); // Save state before new drawing
+      ctx.moveTo(getCanvasX(e), getCanvasY(e));
+      saveState();
     }
 
     function draw(e) {
@@ -135,11 +131,11 @@ document.addEventListener("DOMContentLoaded", function () {
         ctx.strokeStyle = currentColor;
         ctx.globalCompositeOperation = "source-over";
       } else if (currentTool === "eraser") {
-        ctx.strokeStyle = "#ffffff"; // White for erasing
+        ctx.strokeStyle = "#ffffff";
         ctx.globalCompositeOperation = "destination-out";
       }
 
-      ctx.lineTo(getCanvasX(e), getCanvasY(e)); // Use helper function for accurate positioning
+      ctx.lineTo(getCanvasX(e), getCanvasY(e));
       ctx.stroke();
     }
 
@@ -149,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function saveState() {
       undoStack.push(canvas.toDataURL());
-      redoStack = []; // Clear redo stack after new action
+      redoStack = [];
     }
 
     function clearCanvas() {
@@ -158,35 +154,32 @@ document.addEventListener("DOMContentLoaded", function () {
       redoStack = [];
     }
 
-    // Undo function
     function undo() {
       if (undoStack.length > 0) {
-        redoStack.push(canvas.toDataURL()); // Save current state to redo stack
-        let lastState = undoStack.pop(); // Get the last saved state
+        redoStack.push(canvas.toDataURL());
+        let lastState = undoStack.pop();
         let img = new Image();
         img.src = lastState;
         img.onload = function () {
-          ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
-          ctx.drawImage(img, 0, 0); // Draw the previous state
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
         };
       }
     }
 
-    // Redo function
     function redo() {
       if (redoStack.length > 0) {
-        undoStack.push(canvas.toDataURL()); // Save current state to undo stack
+        undoStack.push(canvas.toDataURL());
         let lastRedoState = redoStack.pop();
         let img = new Image();
         img.src = lastRedoState;
         img.onload = function () {
-          ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
-          ctx.drawImage(img, 0, 0); // Redraw the redo state
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
         };
       }
     }
 
-    // Helper function to get mouse position relative to canvas
     function getCanvasX(e) {
       const rect = canvas.getBoundingClientRect();
       return (e.clientX - rect.left) * (canvas.width / rect.width);
@@ -197,26 +190,24 @@ document.addEventListener("DOMContentLoaded", function () {
       return (e.clientY - rect.top) * (canvas.height / rect.height);
     }
 
-    // Tool activation
     function activateTool(selectedTool) {
       const tools = [penButton, eraserButton, moveButton];
       tools.forEach((tool) => tool.classList.remove("active"));
       selectedTool.classList.add("active");
     }
 
-    // Save whiteboard and send to server
+    // Save whiteboard
     saveSketchButton.addEventListener("click", () => {
       const whiteboardName = prompt("Enter a name for your whiteboard:");
       if (whiteboardName) {
         const drawingData = canvas.toDataURL();
         const whiteboard = {
           name: whiteboardName,
-          data: drawingData, // Add this line to include 'data'
+          data: drawingData,
           image: drawingData,
           timestamp: new Date().toISOString()
         };
 
-        // Send whiteboard data to the server
         fetch("/api/whiteboards", {
           method: "POST",
           headers: {
@@ -227,7 +218,6 @@ document.addEventListener("DOMContentLoaded", function () {
           .then((response) => {
             if (response.ok) {
               alert("Whiteboard saved successfully!");
-              // Redirect to dashboard
               window.location.href = "/dashboard";
             } else {
               alert("Failed to save whiteboard.");
@@ -246,13 +236,12 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         if (whiteboardsSection) {
-          // Ensure the element exists
-          whiteboardsSection.innerHTML = ""; // Clear previous content
+          whiteboardsSection.innerHTML = "";
 
           if (whiteboards.length > 0) {
-            whiteboards.forEach((whiteboard, index) => {
+            whiteboards.forEach((whiteboard) => {
               const whiteboardCard = document.createElement("div");
-              whiteboardCard.classList.add("col-md-4", "mb-4"); // Add Bootstrap classes for layout
+              whiteboardCard.classList.add("col-md-4", "mb-4");
 
               const card = document.createElement("div");
               card.classList.add("card");
@@ -267,32 +256,45 @@ document.addEventListener("DOMContentLoaded", function () {
 
               const title = document.createElement("h5");
               title.classList.add("card-title");
-              title.innerText = whiteboard.name || `Whiteboard ${index + 1}`;
+              title.textContent = whiteboard.name;
 
-              const timestamp = document.createElement("p");
-              timestamp.classList.add("timestamp");
-              timestamp.innerText = new Date(
-                whiteboard.timestamp
-              ).toLocaleString();
+              const deleteButton = document.createElement("button");
+              deleteButton.textContent = "Delete";
+              deleteButton.classList.add("btn", "btn-danger");
+              deleteButton.onclick = () => deleteWhiteboard(whiteboard.id);
 
               cardBody.appendChild(title);
-              cardBody.appendChild(timestamp);
+              cardBody.appendChild(deleteButton);
               card.appendChild(img);
               card.appendChild(cardBody);
               whiteboardCard.appendChild(card);
               whiteboardsSection.appendChild(whiteboardCard);
             });
           } else {
-            const message = document.createElement("p");
-            message.innerText = "No saved whiteboards found.";
-            whiteboardsSection.appendChild(message);
+            whiteboardsSection.innerHTML =
+              "<p>No saved whiteboards available.</p>";
           }
-        } else {
-          console.error(
-            "Element with ID 'saved-whiteboards-section' not found."
-          );
         }
       })
       .catch((error) => console.error("Error fetching whiteboards:", error));
   }
 });
+
+// Delete whiteboard
+function deleteWhiteboard(id) {
+  if (confirm("Are you sure you want to delete this whiteboard?")) {
+    fetch(`/api/whiteboards/${id}`, {
+      method: "DELETE"
+    })
+      .then((response) => {
+        if (response.ok) {
+          alert("Whiteboard deleted successfully!");
+          location.reload();
+          // Refresh the page to update the whiteboards list
+        } else {
+          alert("Failed to delete whiteboard.");
+        }
+      })
+      .catch((error) => console.error("Error deleting whiteboard:", error));
+  }
+}

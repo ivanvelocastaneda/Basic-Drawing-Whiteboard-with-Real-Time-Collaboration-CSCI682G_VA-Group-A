@@ -50,7 +50,7 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid username or password.', 'danger')
-        
+
     return render_template('login.html')
 
 # Serve the dashboard page
@@ -62,7 +62,7 @@ def dashboard():
 
     conn = get_db_connection()
     user = conn.execute('SELECT username, email FROM users WHERE id = ?', (session['user_id'],)).fetchone()
-    whiteboards = conn.execute('SELECT name, image, timestamp FROM whiteboards WHERE user_id = ?', (session['user_id'],)).fetchall()
+    whiteboards = conn.execute('SELECT id, name, image, timestamp FROM whiteboards WHERE user_id = ?', (session['user_id'],)).fetchall()
     conn.close()
 
     if user is None:
@@ -82,50 +82,17 @@ def handle_draw(data):
     print(f"Received drawing data: {data}")
     emit('draw', data, broadcast=True)
 
-# @app.route('/api/whiteboards', methods=['GET'])
-# def api_get_whiteboards():
-#     if 'user_id' not in session:
-#         return jsonify({"error": "Unauthorized"}), 403
-
-#     conn = get_db_connection()
-#     whiteboards = conn.execute('SELECT * FROM whiteboards WHERE user_id = ?', (session['user_id'],)).fetchall()
-#     conn.close()
-
-#     return jsonify([dict(whiteboard) for whiteboard in whiteboards])
-
+# Retrieve all whiteboards
 @app.route('/api/whiteboards', methods=['GET'])
 def api_get_whiteboards():
     if 'user_id' not in session:
         return jsonify({"error": "Unauthorized"}), 403
 
-    with get_db_connection() as conn:  # Use a context manager here
+    with get_db_connection() as conn:
         whiteboards = conn.execute('SELECT * FROM whiteboards WHERE user_id = ?', (session['user_id'],)).fetchall()
     return jsonify([dict(whiteboard) for whiteboard in whiteboards])
 
-# API endpoint to save a whiteboard
-# @app.route('/api/whiteboards', methods=['POST'])
-# def api_save_whiteboard():
-#     if 'user_id' not in session:
-#         return jsonify({"error": "Unauthorized"}), 403
-
-#     new_whiteboard = request.json
-
-#     # Ensure the required fields are present in the request
-#     if not new_whiteboard or 'name' not in new_whiteboard or 'data' not in new_whiteboard or 'image' not in new_whiteboard:
-#         return jsonify({"error": "Missing fields"}), 400
-
-#     # Save the whiteboard data to the database
-#     try:
-#         with get_db_connection() as conn:  # Use a context manager to ensure connection is closed
-#             conn.execute("PRAGMA journal_mode=WAL;")  # Enable WAL mode
-#             conn.execute('INSERT INTO whiteboards (user_id, name, data, image) VALUES (?, ?, ?, ?)', 
-#                          (session['user_id'], new_whiteboard['name'], new_whiteboard['data'], new_whiteboard['image']))
-#             conn.commit()
-#     except sqlite3.OperationalError as e:
-#         return jsonify({"error": "Database error: " + str(e)}), 500
-    
-#     return jsonify(new_whiteboard), 201
-
+# Save a new whiteboard
 @app.route('/api/whiteboards', methods=['POST'])
 def api_save_whiteboard():
     if 'user_id' not in session:
@@ -137,15 +104,32 @@ def api_save_whiteboard():
         return jsonify({"error": "Missing fields"}), 400
 
     try:
-        with get_db_connection() as conn:  # Use a context manager to ensure connection is closed
-            conn.execute("PRAGMA journal_mode=WAL;")  # Ensure WAL mode is enabled
-            conn.execute('INSERT INTO whiteboards (user_id, name, data, image) VALUES (?, ?, ?, ?)', 
-                         (session['user_id'], new_whiteboard['name'], new_whiteboard['data'], new_whiteboard['image']))
+        with get_db_connection() as conn:
+            conn.execute("PRAGMA journal_mode=WAL;")
+            conn.execute('INSERT INTO whiteboards (user_id, name, data, image, timestamp) VALUES (?, ?, ?, ?, ?)', 
+                         (session['user_id'], new_whiteboard['name'], new_whiteboard['data'], new_whiteboard['image'], new_whiteboard['timestamp']))
             conn.commit()
     except sqlite3.OperationalError as e:
         return jsonify({"error": "Database error: " + str(e)}), 500
     
     return jsonify(new_whiteboard), 201
+
+# Delete a specific whiteboard
+@app.route('/api/whiteboards/<int:whiteboard_id>', methods=['DELETE'])
+def api_delete_whiteboard(whiteboard_id):
+    if 'user_id' not in session:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    try:
+        with get_db_connection() as conn:
+            result = conn.execute('DELETE FROM whiteboards WHERE id = ? AND user_id = ?', (whiteboard_id, session['user_id']))
+            if result.rowcount == 0:
+                return jsonify({"error": "Whiteboard not found or not authorized"}), 404
+            conn.commit()
+    except sqlite3.OperationalError as e:
+        return jsonify({"error": "Database error: " + str(e)}), 500
+
+    return jsonify({"message": "Whiteboard deleted"}), 200
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():

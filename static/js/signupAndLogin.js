@@ -12,27 +12,6 @@ function showForm(formType) {
     .classList.add("active");
 }
 
-// // Example function to simulate user login status and information
-// const isLoggedIn = true; // Change this based on your authentication logic
-// const userInfo = {
-//   name: "John Doe", // Replace with the actual user's name
-//   email: "johndoe@example.com" // Replace with the actual user's email
-// };
-
-// Check login status and update the UI
-if (isLoggedIn) {
-  // Hide authentication options and show user profile
-  document.getElementById("userProfile").style.display = "block";
-
-  // Populate user information
-  document.getElementById("userName").textContent = userInfo.name;
-  document.getElementById("userNameDetail").textContent = userInfo.name;
-  document.getElementById("userEmail").textContent = userInfo.email;
-} else {
-  // Show authentication options and hide user profile
-  document.getElementById("userProfile").style.display = "none";
-}
-
 function signOut() {
   // Logic to sign out the user
   console.log("User signed out");
