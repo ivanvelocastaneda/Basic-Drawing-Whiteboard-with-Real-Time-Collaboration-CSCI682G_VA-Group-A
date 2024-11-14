@@ -32,22 +32,15 @@
 
       <div id="signup" class="form-container active">
         <form action="{{ url_for('signup') }}" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <h2>Sign Up for Whiteboard</h2>
           <input type="text" name="username" placeholder="Username" required />
           <input type="email" name="email" placeholder="Email" required />
           <!-- Email field added -->
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-          />
-          <input
-            type="password"
-            name="confirm_password"
-            placeholder="Confirm Password"
-            required
-          />
+          <input type="password" id="password" name="password" placeholder="Password" required />
+
+          <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required />
+
           <button type="submit">Sign Up</button>
         </form>
       </div>

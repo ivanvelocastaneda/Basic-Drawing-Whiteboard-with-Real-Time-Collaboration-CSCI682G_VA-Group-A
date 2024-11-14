@@ -1,4 +1,5 @@
 const socket = io.connect("http://127.0.0.1:5000");
+const csrfToken = "{{ csrf_token() }}"; // Make sure this is within your HTML template
 
 // Handle connection event
 socket.on("connect", () => {
@@ -42,6 +43,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let moving = false;
     let offsetX = 0;
     let offsetY = 0;
+    let userId; // Variable to store the user ID
+
+    // Get user ID from the server (assuming it's sent upon connection)
+    socket.on("user_connected", (data) => {
+      userId = data.user_id; // Store the user ID
+    });
 
     // Event listeners for canvas
     canvas.addEventListener("mousedown", function (e) {
@@ -137,11 +144,61 @@ document.addEventListener("DOMContentLoaded", function () {
 
       ctx.lineTo(getCanvasX(e), getCanvasY(e));
       ctx.stroke();
+
+      // Emit drawing data to the server
+      socket.emit('draw', {
+        user_id: userId, // Include user ID
+        x: getCanvasX(e),
+        y: getCanvasY(e),
+        color: currentColor,
+        brushSize: currentBrushSize,
+        tool: currentTool
+      });
     }
 
     function stopDrawing() {
       drawing = false;
     }
+
+    // Listen for drawing events from the server
+    // socket.on('draw', (data) => {
+    //   const { user_id, x, y, color, brushSize, tool } = data;
+
+    //   ctx.lineWidth = brushSize;
+    //   ctx.lineCap = "round";
+
+    //   if (tool === "pen") {
+    //     ctx.strokeStyle = color;
+    //     ctx.globalCompositeOperation = "source-over";
+    //   } else if (tool === "eraser") {
+    //     ctx.strokeStyle = "#ffffff";
+    //     ctx.globalCompositeOperation = "destination-out";
+    //   }
+
+    //   ctx.lineTo(x, y);
+    //   ctx.stroke();
+    // });
+    // Listen for drawing events from the server
+    socket.on('draw', (data) => {
+      const { user_id, x, y, color, brushSize, tool } = data;
+
+      // Only draw if the user_id matches the current user
+      if (user_id !== userId) { // Check if the drawing event is not from the current user
+          ctx.lineWidth = brushSize;
+          ctx.lineCap = "round";
+
+          if (tool === "pen") {
+              ctx.strokeStyle = color;
+              ctx.globalCompositeOperation = "source-over";
+          } else if (tool === "eraser") {
+              ctx.strokeStyle = "#ffffff";
+              ctx.globalCompositeOperation = "destination-out";
+          }
+
+          ctx.lineTo(x, y);
+          ctx.stroke();
+      }
+    });
 
     function saveState() {
       undoStack.push(canvas.toDataURL());
@@ -211,7 +268,8 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch("/api/whiteboards", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken // Use the CSRF token from the variable
           },
           body: JSON.stringify(whiteboard)
         })
@@ -241,7 +299,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (whiteboards.length > 0) {
             whiteboards.forEach((whiteboard) => {
               const whiteboardCard = document.createElement("div");
-              whiteboardCard.classList.add("col-md-4", "mb-4");
+              whiteboardCard.class .add("col-md-4", "mb-4");
 
               const card = document.createElement("div");
               card.classList.add("card");

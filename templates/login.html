@@ -22,6 +22,7 @@
 
       <div id="login" class="form-container active">
         <form action="{{ url_for('login') }}" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <h2>Login to Whiteboard</h2>
           <!-- Display flash messages only relevant to login/logout -->
           {% with messages = get_flashed_messages(with_categories=true) %} {% if

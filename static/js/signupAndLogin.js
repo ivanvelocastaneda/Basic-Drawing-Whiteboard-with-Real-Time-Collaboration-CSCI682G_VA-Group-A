@@ -19,3 +19,9 @@ function signOut() {
   // Redirect to login or home page after signing out
   window.location.href = "/login"; // Adjust the URL as needed
 }
+
+function togglePasswordVisibility() {
+  const passwordInput = document.getElementById('password');
+  const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+  passwordInput.setAttribute('type', type);
+}
