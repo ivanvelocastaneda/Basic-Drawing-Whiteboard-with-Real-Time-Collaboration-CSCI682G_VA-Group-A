@@ -1,5 +1,5 @@
 const socket = io.connect("http://127.0.0.1:5000");
-const csrfToken = "{{ csrf_token() }}"; // Make sure this is within your HTML template
+const csrfToken = document.getElementById('csrf_token').value;
 
 // Handle connection event
 socket.on("connect", () => {
@@ -161,24 +161,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Listen for drawing events from the server
-    // socket.on('draw', (data) => {
-    //   const { user_id, x, y, color, brushSize, tool } = data;
-
-    //   ctx.lineWidth = brushSize;
-    //   ctx.lineCap = "round";
-
-    //   if (tool === "pen") {
-    //     ctx.strokeStyle = color;
-    //     ctx.globalCompositeOperation = "source-over";
-    //   } else if (tool === "eraser") {
-    //     ctx.strokeStyle = "#ffffff";
-    //     ctx.globalCompositeOperation = "destination-out";
-    //   }
-
-    //   ctx.lineTo(x, y);
-    //   ctx.stroke();
-    // });
-    // Listen for drawing events from the server
     socket.on('draw', (data) => {
       const { user_id, x, y, color, brushSize, tool } = data;
 
@@ -252,7 +234,6 @@ document.addEventListener("DOMContentLoaded", function () {
       tools.forEach((tool) => tool.classList.remove("active"));
       selectedTool.classList.add("active");
     }
-
     // Save whiteboard
     saveSketchButton.addEventListener("click", () => {
       const whiteboardName = prompt("Enter a name for your whiteboard:");
@@ -299,7 +280,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (whiteboards.length > 0) {
             whiteboards.forEach((whiteboard) => {
               const whiteboardCard = document.createElement("div");
-              whiteboardCard.class .add("col-md-4", "mb-4");
+              whiteboardCard.class.add("col-md-4", "mb-4");
 
               const card = document.createElement("div");
               card.classList.add("card");
@@ -342,7 +323,10 @@ document.addEventListener("DOMContentLoaded", function () {
 function deleteWhiteboard(id) {
   if (confirm("Are you sure you want to delete this whiteboard?")) {
     fetch(`/api/whiteboards/${id}`, {
-      method: "DELETE"
+      method: "DELETE", 
+      headers: {
+        "X-CSRFToken": csrfToken // Use the CSRF token from the variable
+      },
     })
       .then((response) => {
         if (response.ok) {
@@ -356,3 +340,37 @@ function deleteWhiteboard(id) {
       .catch((error) => console.error("Error deleting whiteboard:", error));
   }
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const whiteboardId = urlParams.get('whiteboardId');
+
+  if (whiteboardId) {
+      loadWhiteboard(whiteboardId);
+  }
+});
+
+function loadWhiteboard(whiteboardId) {
+  fetch(`/api/whiteboards/${whiteboardId}`)
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Failed to load whiteboard');
+          }
+          return response.json();
+      })
+      .then(data => {
+          const canvas = document.getElementById("drawing-canvas");
+          const ctx = canvas.getContext("2d");
+          const img = new Image();
+          img.src = data.image; // Assuming 'image' contains the data URL of the whiteboard
+          img.onload = () => {
+              ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+              ctx.drawImage(img, 0, 0); // Draw the saved whiteboard
+          };
+      })
+      .catch(error => {
+          console.error("Error loading whiteboard:", error);
+          alert("Could not load the whiteboard. Please try again.");
+      });
+}
+

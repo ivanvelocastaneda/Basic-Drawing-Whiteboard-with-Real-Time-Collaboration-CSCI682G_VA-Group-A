@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Collaborative Whiteboard</title>
+    <title>{{ username }}'s Collaborative Whiteboard - {{ whiteboard_name }}</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
@@ -26,7 +26,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
       <div class="container-fluid">
         <a class="navbar-brand" href="{{ url_for('dashboard') }}"
-          >Collaborative Whiteboard</a
+          >{{ username }}'s Collaborative Whiteboard - {{ whiteboard_name }}</a
         >
         <button
           class="navbar-toggler"
@@ -54,10 +54,11 @@
                 ><i class="fa fa-cog" aria-hidden="true"></i
               ></a>
             </li>
+            <!-- Navigation bar -->
             <li class="nav-item">
-              <a class="nav-link" id="share-button" href="#share" title="Share Whiteboard"
-                ><i class="fa fa-share" aria-hidden="true"></i
-              ></a>
+              <a class="nav-link" id="share-button" href="#share" title="Share Whiteboard" data-bs-toggle="modal" data-bs-target="#shareModal">
+                  <i class="fa fa-share" aria-hidden="true"></i>
+              </a>
             </li>
           </ul>
         </div>

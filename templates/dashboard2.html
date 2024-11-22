@@ -27,8 +27,6 @@
     <title>Collaborative Dashboard</title>
   </head>
   <body>
-    <!-- CSRF Token Input -->
-    <input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
@@ -139,7 +137,6 @@
               >
                 Delete
               </button>
-              <button class="btn btn-primary edit-button" onclick="window.location.href='index?whiteboardId={{ whiteboard.id }}'">Load</button>
             </div>
           </div>
         </div>

@@ -15,17 +15,17 @@ def init_db():
             )
         ''')
         
-        c.execute('''
-            CREATE TABLE IF NOT EXISTS whiteboards (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                name TEXT NOT NULL,
-                data TEXT,
-                image TEXT,
-                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users (id)
-            )
-        ''')
+        # c.execute('''
+        #     CREATE TABLE IF NOT EXISTS whiteboards (
+        #         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        #         user_id INTEGER NOT NULL,
+        #         name TEXT NOT NULL,
+        #         data TEXT,
+        #         image TEXT,
+        #         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        #         FOREIGN KEY (user_id) REFERENCES users (id)
+        #     )
+        # ''')
         
         conn.commit()
         
