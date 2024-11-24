@@ -1,5 +1,8 @@
 const socket = io.connect("http://127.0.0.1:5000");
 const csrfToken = document.getElementById('csrf_token').value;
+let currentWhiteboardId; // Variable to store the current whiteboard ID
+let canvas; // Declare the canvas variable globally
+let ctx; // Declare the context variable globally
 
 // Handle connection event
 socket.on("connect", () => {
@@ -12,9 +15,9 @@ socket.on("disconnect", () => {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  var canvas = document.getElementById("drawing-canvas");
+  canvas = document.getElementById("drawing-canvas"); // Initialize canvas here
   if (canvas) {
-    var ctx = canvas.getContext("2d");
+    ctx = canvas.getContext("2d"); // Initialize context here
     var penButton = document.getElementById("pen-tool");
     var eraserButton = document.getElementById("eraser-tool");
     var dropdownToggle = document.getElementById("dropdown-toggle");
@@ -116,7 +119,8 @@ document.addEventListener("DOMContentLoaded", function () {
       currentBrushSize = brushSize.value;
     });
 
-    clearButton.addEventListener("click", clearCanvas);
+    clearButton.addEventListener
+    ("click", clearCanvas);
     undoButton.addEventListener("click", undo);
     redoButton.addEventListener("click", redo);
 
@@ -234,6 +238,7 @@ document.addEventListener("DOMContentLoaded", function () {
       tools.forEach((tool) => tool.classList.remove("active"));
       selectedTool.classList.add("active");
     }
+
     // Save whiteboard
     saveSketchButton.addEventListener("click", () => {
       const whiteboardName = prompt("Enter a name for your whiteboard:");
@@ -280,7 +285,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (whiteboards.length > 0) {
             whiteboards.forEach((whiteboard) => {
               const whiteboardCard = document.createElement("div");
-              whiteboardCard.class.add("col-md-4", "mb-4");
+              whiteboardCard.classList.add("col-md-4", "mb-4");
 
               const card = document.createElement("div");
               card.classList.add("card");
@@ -359,14 +364,21 @@ function loadWhiteboard(whiteboardId) {
           return response.json();
       })
       .then(data => {
-          const canvas = document.getElementById("drawing-canvas");
-          const ctx = canvas.getContext("2d");
           const img = new Image();
           img.src = data.image; // Assuming 'image' contains the data URL of the whiteboard
           img.onload = () => {
               ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
               ctx.drawImage(img, 0, 0); // Draw the saved whiteboard
+              // Show the Export PDF button since a saved whiteboard has been loaded
+              document.getElementById("export-pdf").style.display = "block"; // Show the Export button
           };
+
+          // Set the currentWhiteboardId to ensure it is available for updates
+          currentWhiteboardId = whiteboardId; // Ensure the ID is set here
+          console.log("Current Whiteboard ID set to:", currentWhiteboardId); // Log the current ID
+
+          // Show the Update button since a saved whiteboard has been loaded
+          document.getElementById("update-sketch").style.display = "block"; // Show the Update button
       })
       .catch(error => {
           console.error("Error loading whiteboard:", error);
@@ -374,3 +386,49 @@ function loadWhiteboard(whiteboardId) {
       });
 }
 
+document.getElementById("update-sketch").addEventListener("click", () => {
+  if (!currentWhiteboardId) {
+      alert("No whiteboard loaded for updating.");
+      return;
+  }
+
+  const drawingData = canvas.toDataURL();
+  const whiteboard = {
+      name: prompt("Enter a name for your whiteboard:"),
+      data: drawingData,
+      image: drawingData,
+      timestamp: new Date().toISOString(),
+  };
+
+  fetch(`/api/whiteboards/${currentWhiteboardId}`, {
+      method: "PUT",
+      headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken // Use the CSRF token from the variable
+      },
+      body: JSON.stringify(whiteboard)
+  })
+  .then((response) => {
+      if (response.ok) {
+          alert("Whiteboard updated successfully!");
+          window.location.href = "/dashboard"; // Redirect to dashboard
+      } else {
+          alert("Failed to update whiteboard.");
+      }
+  })
+  .catch((error) => console.error("Error updating whiteboard:", error));
+});
+
+
+function exportToPDF() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+  const canvasImage = canvas.toDataURL(" image/png");
+
+  // Add the image to the PDF
+  pdf.addImage(canvasImage, 'PNG', 10, 10, canvas.width / 10, canvas.height / 10); // Adjust the width and height as needed
+  pdf.save('whiteboard.pdf');
+}
+
+// Add event listener for the Export PDF button
+document.getElementById("export-pdf").addEventListener("click", exportToPDF);

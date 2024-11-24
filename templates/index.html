@@ -77,9 +77,8 @@
         <i class="fas fa-bars"></i>
       </button>
       <div class="dropdown" id="dropdown-menu" style="display: none">
-        <div class="dropdown-content" id="new-sketch">New Sketch</div>
         <div class="dropdown-content" id="save-sketch">Save Sketch</div>
-        <div class="dropdown-content" id="import-image">Import Image</div>
+        <div class="dropdown-content" id="update-sketch" style="display: none">Update Sketch</div>
       </div>
     </div>
 
@@ -88,11 +87,8 @@
 
     <!-- Bottom Bar -->
     <div class="bottom-bar">
-      <button
-        onclick="window.location.href='{{ url_for('dashboard') }}';"
-        title="Home"
-      >
-        <i class="fa fa-home" aria-hidden="true"></i>
+      <button id="export-pdf" title="Export to PDF" style="display: none;">
+        <i class="fa fa-download" aria-hidden="true"></i>
       </button>
       <button id="clear" title="Clear">
         <i class="fas fa-trash"></i>
@@ -113,5 +109,6 @@
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script src="{{ url_for('static', filename='js/whiteboard.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   </body>
 </html>

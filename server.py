@@ -233,6 +233,37 @@ def api_load_whiteboard(whiteboard_id):
     
     return jsonify(dict(whiteboard))
 
+# Update a specific whiteboard
+@app.route('/api/whiteboards/<int:whiteboard_id>', methods=['PUT'])
+def api_update_whiteboard(whiteboard_id):
+    if 'user_id' not in session:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    updated_whiteboard = request.json
+
+    # Validate input using Marshmallow schema
+    try:
+        validated_data = whiteboard_schema.load(updated_whiteboard)
+    except ValidationError as err:
+        return jsonify({"error": err.messages}), 400
+
+    try:
+        with get_db_connection() as conn:
+            conn.execute("PRAGMA journal_mode=WAL ;")
+            # Update the existing whiteboard
+            result = conn.execute(
+                'UPDATE whiteboards SET name = ?, data = ?, image = ?, timestamp = ? WHERE id = ? AND user_id = ?',
+                (validated_data['name'], validated_data['data'], validated_data['image'], validated_data['timestamp'], whiteboard_id, session['user_id'])
+            )
+            conn.commit()
+
+            if result.rowcount == 0:
+                return jsonify({"error": "Whiteboard not found or not authorized"}), 404
+    except sqlite3.OperationalError as e:
+        return jsonify({"error": "Database error: " + str(e)}), 500
+
+    return jsonify(validated_data), 200
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
