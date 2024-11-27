@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
     var penButton = document.getElementById("pen-tool");
     var eraserButton = document.getElementById("eraser-tool");
     var dropdownToggle = document.getElementById("dropdown-toggle");
-    var dropdownMenu = document.getElementById("dropdown-menu");
     var colorPicker = document.getElementById("color-picker");
     var brushSize = document.getElementById("brush-size");
     var clearButton = document.getElementById("clear");
@@ -369,8 +368,13 @@ function loadWhiteboard(whiteboardId) {
           img.onload = () => {
               ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
               ctx.drawImage(img, 0, 0); // Draw the saved whiteboard
+
+              // Hide the Save button since a saved whiteboard has been loaded
+              document.getElementById("save-sketch").style.display = "none"; // Hide the Save button
               // Show the Export PDF button since a saved whiteboard has been loaded
               document.getElementById("export-pdf").style.display = "block"; // Show the Export button
+              // Show the Share button since a saved whiteboard has been loaded
+              document.getElementById("share-sketch").style.display = "block"; // Show the Share button
           };
 
           // Set the currentWhiteboardId to ensure it is available for updates
@@ -432,3 +436,18 @@ function exportToPDF() {
 
 // Add event listener for the Export PDF button
 document.getElementById("export-pdf").addEventListener("click", exportToPDF);
+
+// Toggle dropdown menu visibility
+document.getElementById('dropdown-toggle').addEventListener('click', function() {
+  const dropdownMenu = document.getElementById('dropdown-menu');
+  dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+});
+
+// Close dropdown if clicked outside
+window.addEventListener('click', function(event) {
+  if (!event.target.matches('#dropdown-toggle')) {
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    dropdownMenu.style.display = 'none';
+  }
+});
+

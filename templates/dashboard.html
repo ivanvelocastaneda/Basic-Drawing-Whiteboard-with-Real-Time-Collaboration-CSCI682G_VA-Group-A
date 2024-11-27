@@ -30,74 +30,42 @@
     <!-- CSRF Token Input -->
     <input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">Collaborative Whiteboard Dashboard</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li
-              class="nav-item dropdown"
-              id="userProfile"
-              style="display: block"
-            >
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navbarDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <img
-                  src="https://static.vecteezy.com/system/resources/previews/020/911/740/original/user-profile-icon-profile-avatar-user-icon-male-icon-face-icon-profile-icon-free-png.png"
-                  alt="User Profile"
-                  class="profile-img"
-                  width="30"
-                />
-                <span id="userName">{{ user.username }}</span>
-              </a>
-              <ul
-                class="dropdown-menu dropdown-menu-end"
-                aria-labelledby="navbarDropdown"
-              >
-                <li class="user-info dropdown-item">
-                  <img
-                    src="https://cdn3.iconfinder.com/data/icons/avatars-flat/33/man_5-1024.png"
-                    alt="Profile Image"
-                    class="profile-dropdown-img"
-                  />
-                  <div>
-                    <span id="userNameDetail" class="user-name"
-                      >{{ user.name }}</span
-                    ><br />
-                    <span id="userEmail" class="email">{{ user.email }}</span>
-                    <a href="/account" class="my-account">My Account</a>
-                  </div>
-                </li>
-                <li><hr class="dropdown-divider" /></li>
-                <li class="dropdown-item">
-                  <button
-                    class="btn btn-outline-danger btn-sm sign-out-dropdown"
-                    onclick="signOut()"
+          <a class="navbar-brand" href="#">Collaborative Whiteboard Dashboard</a>
+          <div class="d-flex ms-auto align-items-center"> <!-- Added align-items-center for vertical alignment -->
+              <li class="nav-item dropdown" id="userProfile" style="display: block">
+                  <a
+                      class="nav-link dropdown-toggle"
+                      href="#"
+                      id="navbarDropdown"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
                   >
-                    Sign Out
-                  </button>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
+                      <i class="fas fa-user" style="font-size: 20px; margin-right: 5px;"></i> <!-- Smaller icon with margin -->
+                      <span id="userName">{{ user.username }}</span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                      <li class="user-info dropdown-item">
+                          <div>
+                              <span id="userNameDetail" class="user-name">{{ user.name }}</span><br />
+                              <span id="userEmail" class="email">{{ user.email }}</span>
+                              <a href="/account" class="my-account">My Account</a>
+                          </div>
+                      </li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li class="dropdown-item">
+                          <button
+                              class="btn btn-outline-danger btn-sm sign-out-dropdown"
+                              onclick="signOut()"
+                          >
+                              Sign Out
+                          </button>
+                      </li>
+                  </ul>
+              </li>
+          </div>
       </div>
     </nav>
 

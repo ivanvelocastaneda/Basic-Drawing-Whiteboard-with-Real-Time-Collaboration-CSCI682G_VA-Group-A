@@ -11,7 +11,6 @@ from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 import re
-import uuid
 
 # Load environment variables from .env file
 load_dotenv()
@@ -137,7 +136,7 @@ def whiteboard():
         flash('Please log in to access the whiteboard.', 'warning')
         return redirect(url_for('login'))
 
-    # Fetch the username from the database
+    # Fetch the username, name and email from the database
     conn = get_db_connection()
     user = conn.execute('SELECT username FROM users WHERE id = ?', (session['user_id'],)).fetchone()
 
@@ -156,10 +155,6 @@ def whiteboard():
     if user is None:
         flash('User  not found.', 'danger')
         return redirect(url_for('login'))
-    
-    # Generate a unique link for the whiteboard session
-    whiteboard_id = str(uuid.uuid4())
-    share_link = f"{request.host_url}whiteboard/{whiteboard_id}"
 
     return render_template('index.html', username=user['username'], whiteboard_id=whiteboard_id, whiteboard_name=whiteboard_name)
 
