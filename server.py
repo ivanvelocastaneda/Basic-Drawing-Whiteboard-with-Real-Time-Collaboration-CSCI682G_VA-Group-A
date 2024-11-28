@@ -158,11 +158,6 @@ def whiteboard():
 
     return render_template('index.html', username=user['username'], whiteboard_id=whiteboard_id, whiteboard_name=whiteboard_name)
 
-@socketio.on('draw')
-def handle_draw(data):
-    user_id = data['user_id']
-    emit('draw', data, room=user_id)  # Emit to the user's room only
-
 # Retrieve all whiteboards
 @app.route('/api/whiteboards', methods=['GET'])
 def api_get_whiteboards():
@@ -326,6 +321,11 @@ def handle_connect():
     user_id = session.get('user_id')
     join_room(user_id)  # Join a room based on user ID
     emit('user_connected', {'user_id': user_id}, broadcast=True)
+
+@socketio.on('draw')
+def handle_draw(data):
+    user_id = data['user_id']
+    emit('draw', data, room=user_id)  # Emit to the user's room only
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

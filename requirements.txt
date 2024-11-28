@@ -1,7 +1,17 @@
+# To clone the repository and run the project, follow these steps:
+# 1. Clone the repository:
+#    git clone https://github.com/ivanvelocastaneda/Basic-Drawing-Whiteboard-with-Real-Time-Collaboration-CSCI682G_VA-Group-A.git
+# 2. Navigate into the project directory:
+#    cd cd Basic-Drawing-Whiteboard-with-Real-Time-Collaboration-CSCI682G_VA-Group-A
+# 3. Activate our existing virtual environment:
+#    - On Windows: venv\Scripts\activate
+#    - On macOS/Linux: source venv/bin/activate
+# 4. Run the server:
+#    python server.py
+
 Flask==2.1.2 
 Flask-SocketIO==5.2.0
-#pip install Flask Flask-SocektIO
-# To run the server, use venv\Scripts\activate then do python server.py or py server.py
+#pip install Flask Flask-SocketIO
 
 
 # Structure of the Project
@@ -14,9 +24,17 @@ collaborative-whiteboard/
 ├── static/                     # For CSS and JS files
 │   ├── js/
 │   │   └── whiteboard.js       # JavaScript file for drawing functionality
-│   └── css/
-│       └── style.css           # CSS file for whiteboard styles
-│
+            signupAndLogin.js   # JavaScript file for signup and login functionalities
+│   └── css/                    # CSS files for whiteboard, login, signup, and dashboard styles
+│       └── whiteboard.css
+│           login.css
+            singup.css
+            dahsboard.css          
+│           
 └── templates/                  # HTML templates
-    └── index.html              # Main frontend interface
+    └── index.html              # Main whiteboard interface
+        login.html              # Login frontend interface
+        signup.html             # Signup frontend interface
+        dashboard.html          # Dahsboard frontend interface
+                 
 
